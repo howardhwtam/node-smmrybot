@@ -146,7 +146,7 @@ function sendSmmry(sender, articleURL) {
 
 
 function isLegitURL(text) {
-  let t = text.trim() ;
+  let t = text.trim();
   if (!t.includes(' ') && t.includes('.') && t.includes('/')) {
     return true;
   }
@@ -157,8 +157,8 @@ function urlTrimmer(url) {
   return url
     .replace(/https:\/\/l\.messenger\.com\/l\.php\?u=/, '')
     .replace(/https:\/\/l\.facebook\.com\/l\.php\?u=/, '')
-    .replace(/&h=.+/, '')
-}
+    .replace(/&h=.+/, '');
+};
 
 
 module.exports = router;
