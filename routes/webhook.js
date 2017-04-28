@@ -2,21 +2,21 @@ const express = require('express');
 const request = require('request');
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-const pageToken = process.env.PAGE_ACCESS_TOKEN;
-const verifyToken = process.env.HUB_VERIFY_TOKEN;
+const PAGE_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const VERIFY_TOKEN = process.env.HUB_VERIFY_TOKEN;
 
-const helpMessage = "Simply paste the URL of an online article here, and I will return a five-sentence summary.";
-const bsMessage = "I do not have time for chit-chat, human. If you are unsure what my purpose is, type 'help'.";
-const smmryTextTooShortMessage = "Your article is too short to be summarized. Please try another article.";
-const smmryTextNotReckonMessage = "Sorry - I could not recognize the webpage's format. Please try another article.";
-const smmryErrorMessage = "Please try again later or try another article.";
-const smmrySucessMessage = "Got another article? Send me the link!";
+const HELP_MSG = "Simply paste the URL of an online article here, and I will return a five-sentence summary.";
+const BS_MSG = "I do not have time for chit-chat, human. If you are unsure what my purpose is, type 'help'.";
+const S_TOO_SHORT_MSG = "Your article is too short to be summarized. Please try another article.";
+const S_NOT_RECKON_MSG = "Sorry - I could not recognize the webpage's format. Please try another article.";
+const S_ERROR_MSG = "Please try again later or try another article.";
+const S_SUCCESS_MSG = "Got another article? Send me the link!";
 
 const router = express.Router();
 
 
 router.get('/', function (req, res) {
-  if (req.query['hub.verify_token'] === verifyToken) {
+  if (req.query['hub.verify_token'] === VERIFY_TOKEN) {
     res.send(req.query['hub.challenge']);
   }
   res.send('Verify token error');
@@ -34,9 +34,9 @@ router.post('/', function (req, res) {
     if (isLegitURL(text)) {
       sendSmmry(sender, urlTrimmer(text));
     } else if (text.trim().toLowerCase() === 'help') {
-      sendTextMessage(sender, helpMessage);
+      sendTextMessage(sender, HELP_MSG);
     } else {
-      sendTextMessage(sender, bsMessage);
+      sendTextMessage(sender, BS_MSG);
     }
   }
   res.sendStatus(200);
@@ -65,7 +65,7 @@ function sendTextMessage(sender, text) {
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
     qs: {
-      access_token: pageToken
+      access_token: PAGE_TOKEN
     },
     method: 'POST',
     json: {
@@ -99,7 +99,7 @@ function getSmmryArray(url, n) {
     console.log('[SMMRY API]', jsonRes['sm_api_limitation']);
     
     smmryArr.pop();
-    smmryArr.push(smmrySucessMessage);
+    smmryArr.push(S_SUCCESS_MSG);
     // smmryArr.unshift(title);
     return smmryArr;
     
@@ -107,11 +107,11 @@ function getSmmryArray(url, n) {
     console.log('[ERROR]', jsonRes['sm_api_error'], jsonRes['sm_api_message']);
     
     if (jsonRes['sm_api_message'] === 'TEXT IS TOO SHORT') {
-      return [smmryTextTooShortMessage];
+      return [S_TOO_SHORT_MSG];
     } else if (jsonRes['sm_api_message'] === 'THE PAGE IS IN AN UNRECOGNISABLE FORMAT') {
-      return [smmryTextNotReckonMessage];
+      return [S_NOT_RECKON_MSG];
     } else {
-      return [smmryErrorMessage];
+      return [S_ERROR_MSG];
     }
   }
 };
@@ -121,7 +121,7 @@ function asyncArrayLoop(sender, arr, i) {
   if (i < arr.length) {
     request({
       url: 'https://graph.facebook.com/v2.6/me/messages',
-      qs: { access_token: pageToken },
+      qs: { access_token: PAGE_TOKEN },
       method: 'POST',
       json: {						    
         recipient: { id: sender },				    
