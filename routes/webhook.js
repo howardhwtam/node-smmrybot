@@ -30,9 +30,10 @@ router.post('/', function (req, res) {
     let event = req.body.entry[0].messaging[i];
     let sender = event.sender.id;
     let text = eventUnpacker(event);
-    
-    if (isLegitURL(text)) {
-      sendSmmry(sender, urlTrimmer(text));
+
+    if (urlDetector(text)) {
+      let url = urlDetector(text)
+      sendSmmry(sender, urlTrimmer(url));
     } else if (text.trim().toLowerCase() === 'help') {
       sendTextMessage(sender, HELP_MSG);
     } else {
@@ -85,27 +86,27 @@ function sendTextMessage(sender, text) {
 function getSmmryArray(url, n) {
   let xhr = new XMLHttpRequest();
   let smmryURL = "http://api.smmry.com/&SM_API_KEY=C3DE141F43&SM_WITH_BREAK&SM_LENGTH=" + n + "&SM_URL=" + url;
-  
+
   console.log('Making a request to: ', smmryURL);
-  
+
   xhr.open('GET', smmryURL, false);
   xhr.send();
-  
+
   let jsonRes = JSON.parse(xhr.responseText);
   if (jsonRes['sm_api_content']) {
     let title = jsonRes['sm_api_title'].replace('\\', '').toUpperCase();
     let smmryArr = jsonRes['sm_api_content'].trim().split('[BREAK]');
-    
+
     console.log('[SMMRY API]', jsonRes['sm_api_limitation']);
-    
+
     smmryArr.pop();
     smmryArr.push(S_SUCCESS_MSG);
     // smmryArr.unshift(title);
     return smmryArr;
-    
+
   } else if (jsonRes['sm_api_error']) {
     console.log('[ERROR]', jsonRes['sm_api_error'], jsonRes['sm_api_message']);
-    
+
     if (jsonRes['sm_api_message'] === 'TEXT IS TOO SHORT') {
       return [S_TOO_SHORT_MSG];
     } else if (jsonRes['sm_api_message'] === 'THE PAGE IS IN AN UNRECOGNISABLE FORMAT') {
@@ -123,10 +124,10 @@ function asyncArrayLoop(sender, arr, i) {
       url: 'https://graph.facebook.com/v2.6/me/messages',
       qs: { access_token: PAGE_TOKEN },
       method: 'POST',
-      json: {						    
-        recipient: { id: sender },				    
-        message: { text: arr[i] }				    
-      }	
+      json: {
+        recipient: { id: sender },
+        message: { text: arr[i] }
+      }
     }, function (error, response, body) {
       if (error) {
 	console.log ('ERROR SENDING MESSAGE: ', error);
@@ -145,14 +146,6 @@ function sendSmmry(sender, articleURL) {
 };
 
 
-function isLegitURL(text) {
-  let t = text.trim();
-  if (!t.includes(' ') && t.includes('.') && t.includes('/')) {
-    return true;
-  }
-};
-
-
 function urlTrimmer(url) {
   return url
     .replace(/https:\/\/l\.messenger\.com\/l\.php\?u=/, '')
@@ -160,5 +153,14 @@ function urlTrimmer(url) {
     .replace(/&h=.+/, '');
 };
 
+
+function urlDetector(text) {
+  let re = /(http:\/\/|https:\/\/|www)\S+/g;
+  let result = re.exec(text);
+
+  if (result) {
+    return result[0];
+  }
+};
 
 module.exports = router;
