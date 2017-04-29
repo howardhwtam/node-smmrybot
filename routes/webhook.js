@@ -146,11 +146,11 @@ function sendSmmry(sender, articleURL) {
 };
 
 
-function isLegitURL(text) {
-  let t = text.trim();
-  if (!t.includes(' ') && t.includes('.') && t.includes('/')) {
-    return true;
-  }
+function urlTrimmer(url) {
+  return url
+    .replace(/https:\/\/l\.messenger\.com\/l\.php\?u=/, '')
+    .replace(/https:\/\/l\.facebook\.com\/l\.php\?u=/, '')
+    .replace(/&h=.+/, '');
 };
 
 
@@ -161,6 +161,6 @@ function urlDetector(text) {
   if (result) {
     return result[0];
   }
-}
+};
 
 module.exports = router;
