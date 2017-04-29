@@ -157,7 +157,10 @@ function isLegitURL(text) {
 function urlDetector(text) {
   let re = /(http:\/\/|https:\/\/|www)\S+/g;
   let result = re.exec(text);
-  return result[0];
+
+  if (result) {
+    return result[0];
+  }
 }
 
 module.exports = router;
