@@ -155,7 +155,7 @@ function urlTrimmer(url) {
 
 
 function urlDetector(text) {
-  let re = /(http:\/\/|https:\/\/|www\.).+\.com\S+/g;
+  let re = /(http:\/\/|https:\/\/|www\.).+\.\S+/g;
   let result = re.exec(text);
 
   if (result) {
