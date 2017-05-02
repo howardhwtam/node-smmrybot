@@ -31,11 +31,15 @@ router.post('/', function (req, res) {
     let sender = event.sender.id;
     let text = eventUnpacker(event);
 
-    if (urlDetector(text)) {
-      let url = urlDetector(text)
-      sendSmmry(sender, urlTrimmer(url));
-    } else if (text.trim().toLowerCase() === 'help') {
-      sendTextMessage(sender, HELP_MSG);
+    if (text) {
+      if (urlDetector(text)) {
+        let url = urlDetector(text)
+        sendSmmry(sender, urlTrimmer(url));
+      } else if (text.trim().toLowerCase() === 'help') {
+        sendTextMessage(sender, HELP_MSG);
+      } else {
+        sendTextMessage(sender, BS_MSG);
+      }
     } else {
       sendTextMessage(sender, BS_MSG);
     }
@@ -51,10 +55,10 @@ function eventUnpacker(event) {
     } else if (event.message.attachments[0].url) {
       return event.message.attachments[0].url;
     }
-  } else if (event.postback) {
+  } else if (event.postback) { // when Get Started button is clicked
     return 'help';
   } else {
-    return 'USER_SENT_GIBBERSIH'; // like gif or a pic lol
+    return 'USER_SENT_GIBBERSIH'; // 
   }
 };
 
