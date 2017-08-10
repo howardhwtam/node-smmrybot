@@ -7,7 +7,7 @@ const VERIFY_TOKEN = process.env.HUB_VERIFY_TOKEN;
 
 const HELP_MSG = "Simply paste the URL of an online article here, and I will return a five-sentence summary.";
 const BS_MSG = "I do not have time for chit-chat, human. If you are unsure what my purpose is, type 'help'.";
-const WELCOME_MSG = "You are most welcome";
+const WELCOME_MSG = "You are most welcome.";
 const S_TOO_SHORT_MSG = "Your article is too short to be summarized. Please try another article.";
 const S_NOT_RECKON_MSG = "Sorry - I could not recognize the webpage's format. Please try another article.";
 const S_ERROR_MSG = "Please try again later or try another article.";
