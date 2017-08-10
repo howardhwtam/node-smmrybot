@@ -37,7 +37,7 @@ router.post('/', function (req, res) {
 	    sendSmmry(sender, urlTrimmer(url));
 	} else if (text.trim().toLowerCase() === 'help') {
 	    sendTextMessage(sender, HELP_MSG);
-	} else if (text.trim().toLowerCase() === 'thanks') {
+	} else if (text.trim().toLowerCase().includes('thank')) {
 	    sendTextMessage(sender, WELCOME_MSG);
 	} else {
 	    sendTextMessage(sender, BS_MSG);
